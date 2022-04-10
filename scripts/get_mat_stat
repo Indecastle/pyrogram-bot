@@ -1,0 +1,3 @@
+SELECT ChatId, UserId, UserName, FirstName, LastName, Count, date(CreatedAtDate, 'unixepoch'), datetime(CreatedAtDateTime, 'unixepoch')
+FROM mat_stat
+ORDER BY CreatedAtDate DESC, Count DESC
