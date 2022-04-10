@@ -120,7 +120,7 @@ def define_schedule(app: Client):
     aioschedule.every().day.at('07:00').do(morning, app=app, id=712315499)  # Мама
     aioschedule.every().day.at('07:00').do(morning, app=app, id=886661129)  # Розинский
 
-    aioschedule.every(20).minutes.do(update_live_client, app=app)
+    aioschedule.every(10).minutes.do(update_live_client, app=app)
 
     # aioschedule.every().day.at('22:00').do(show_mat_stat, app=app)
     # aioschedule.every().hour.do(notify_mat_stat, app=app)
