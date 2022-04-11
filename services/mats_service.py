@@ -31,7 +31,7 @@ warnings = [
 
 patterns = [
     'су+(к|чк|ча+р|че+к)', 'пид[оа]+р(а+с)?([аы]|о+в)?', 'у[её]б(к|очк)?([аы]|ов|ище)?',
-    'еба(ть|л)', 'еби', 'еб(ан)?(ут|еш|ёш|уч)', 'в[ыьъ]еб([аеиу])', 'д[оа]лб[оа][её]б', r'(?<!ру)(?<!влю)бля',  # долбаЁб не хочет
+    'еба(ть|л)', 'еби', 'еб(ан)?(ут|еш|ёш|уч)', 'в[ыьъ]еб([аеиу])', 'д[оа]лб[оа][её]б', r'(?<!ру)(?<!влю)бля',
     'ху(([йя]|ита)|([её]([кв]|(чек)|т))|(йн([её]й|ей)?))', r'(на)?хер', 'пизд([аà]|е|ят)', 'gghh'
 ]
 compiled_patterns = [re.compile(p, re.IGNORECASE | re.MULTILINE) for p in patterns]
@@ -117,9 +117,10 @@ async def mat_reply(client: Client, msg: Message):
                                                            msg.reply_to_message.forward_from_message_id)
         reply_to_message_id = disc_message.message_id
         return await disc_message.reply(get_random_warning(), reply_to_message_id=reply_to_message_id,
-                                        disable_notification=True)
+                                        disable_notification=True, parse_mode=None)
     else:
-        return await client.send_message(msg.chat.id, get_random_warning())
+        return await client.send_message(msg.chat.id, get_random_warning(),
+                                         disable_notification=True, parse_mode=None)
 
 
 async def get_matstat_result(chat_id: int = None, days: int = None, is_get_link_username: bool = None):
@@ -139,7 +140,7 @@ async def get_matstat_result(chat_id: int = None, days: int = None, is_get_link_
     else:
         word = f'{days} дней'
 
-    text = f'Cтатистика количества матов за {word}\n\n'
+    text = f'Cтатистика количества мата за {word}\n\n'
     for mat_stat in islice(mat_stats, 10 if days < 30 else 20):
         try:
             if is_get_link_username:
