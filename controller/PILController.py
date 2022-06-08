@@ -32,9 +32,10 @@ def get_image(text, message_id):
         offset_y += font_text.getsize(line)[1]
 
     image_filename = f"temp/{message_id}.png"
-    f = open(image_filename, "wb+")
+    f = io.BytesIO()
+    # setattr(buffer, 'name', 'temp')
     image.save(f, format='PNG')
-    f.seek(io.SEEK_SET)
+    # f.seek(io.SEEK_SET)
 
     return f
 

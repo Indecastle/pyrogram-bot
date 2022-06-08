@@ -26,9 +26,9 @@ last_time_mated = time.time()
 reply_type = ReplyType(get_setting_value("reply_type", int))
 
 
-def init_mats_chat_messages(app: Client):
+def init_mats_chat_messages_controller(app: Client):
     global mats_chat_messages
-    mats_chat_messages = set([d.chat.id for d in app.get_dialogs(limit=1000) if d.chat.type in ('bot', 'private')])
+    mats_chat_messages = set([d.chat.id for d in app.get_dialogs(limit=1000) if d.chat.type in ('bot', 'private', 'supergroup')])
     mats_chat_messages.add(common.ME_ID)
 
 

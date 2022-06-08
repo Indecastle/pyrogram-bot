@@ -95,8 +95,10 @@ async def reply_handler(client: Client, msg: Message, reply_type: ReplyType):
     global is_replied_message
 
     if reply_type in (ReplyType.reaction, ReplyType.reactionTemp):
+        full_chat = await client.get_chat(msg.chat.id)
+        available_reactions = full_chat.available_reactions or ['🤬']
         try:
-            await client.send_reaction(msg.chat.id, msg.message_id, '🤯')  # 🤬 👍
+            await client.send_reaction(msg.chat.id, msg.message_id, available_reactions[-1])  # 🤬 👍
             if reply_type == ReplyType.reactionTemp:
                 await asyncio.sleep(10)
                 await client.send_reaction(msg.chat.id, msg.message_id, '')
@@ -173,7 +175,7 @@ async def mat_stat_notify(app: Client):
     chats = await get_mat_stat_chats(get_unix_date())
     for chat_id in chats:
         try:
-            await app.send_message(chat_id, """Что-бы узнать статистику матов за день, напишите /matstat""")
+            await app.send_message(chat_id, """Что-бы узнать статистику мата за день, напишите .matstat""")
         except Exception as e:
             print(f"mat_stat_notify error: chat_id={chat_id}")
 

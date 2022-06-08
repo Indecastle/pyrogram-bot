@@ -9,6 +9,7 @@ from collections import OrderedDict
 from typing import Union
 
 import pickledb
+from pyrogram.raw.functions.messages import GetAvailableReactions
 from tabulate import tabulate
 
 from pyrogram import Client, filters, utils
@@ -84,9 +85,22 @@ async def test1(app: Client):
     print(disc_mes)
 
 
+async def test2(app: Client):
+    chat_id = -1001790121117
+    chat = await app.get_chat(chat_id)
+    reactions = await app.send(
+            GetAvailableReactions(
+                hash=0,
+            ),
+            sleep_threshold=60
+        )
+    print(chat)
+
+
 async def async_main(app):
-    await save_dialogs(app)
+    # await save_dialogs(app)
     # await test1(app)
+    await test2(app)
     # await me(app)
     # await channel_comment_test(app)
     # await mat_stat_show_all(app)
