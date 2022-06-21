@@ -178,4 +178,3 @@ async def mat_stat_notify(app: Client):
             await app.send_message(chat_id, """Что-бы узнать статистику мата за день, напишите .matstat""")
         except Exception as e:
             print(f"mat_stat_notify error: chat_id={chat_id}")
-

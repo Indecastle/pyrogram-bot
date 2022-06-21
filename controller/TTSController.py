@@ -56,7 +56,7 @@ def TTS_controller(app: Client):
         await msg.delete()
 
 
-    @app.on_message(filters.command('', prefixes=['*', '**']) & filters.me)
+    @app.on_message(filters.command('', prefixes=['*', '**']) & (my_filters.is_true(lambda msg: msg.chat.type == 'private') | filters.me) )
     async def TTS_handler(client: Client, msg: Message):
         await msg.delete()
 
