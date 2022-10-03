@@ -44,3 +44,4 @@ packages/
 *.session
 *.session-journal
 config.ini
+config.py

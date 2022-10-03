@@ -1,5 +1,6 @@
 import os, datetime
 
+from pyrogram.enums import ChatType
 from pyrogram.types import Message
 
 
@@ -15,11 +16,10 @@ def get_time():
 
 def log_mat(chat_type: str, message: Message):
 
-
-    if chat_type in ('channel', 'supergroup', 'group'):
+    if chat_type in (ChatType.CHANNEL, ChatType.SUPERGROUP, ChatType.GROUP):
         if message.reply_to_message is not None and message.reply_to_message.forward_from_chat is not None:
             title = message.reply_to_message.forward_from_chat.title
-            chat_type = 'channel'
+            chat_type = ChatType.CHANNEL
 
         elif message.chat.title is not None:
             title = message.chat.title
@@ -41,9 +41,9 @@ def log_mat(chat_type: str, message: Message):
                       who or "",
                       name or "",
                       message.text or ""))
-    elif chat_type == 'group':
+    elif chat_type == ChatType.GROUP:
         title = message.chat.title
-    elif chat_type == 'private':
+    elif chat_type == ChatType.PRIVATE:
         title = message.chat.title
         print(f'{get_time()}: at user "{title}", sent message with curse words: "{message.text}" ')
 
