@@ -70,7 +70,6 @@ def mats_messages_controller(app: Client):
     @app.on_message(filters.command("mat", prefixes=".") & filters.me)
     async def mat_handler(_, msg: Message):
         mats_chat_messages.add(msg.chat.id)
-        mess = await app.get_history(msg.chat.id, limit=3)
         await msg.delete()
 
     @app.on_message(filters.command("unmat", prefixes=".") & filters.me)
