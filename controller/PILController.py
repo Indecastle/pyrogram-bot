@@ -46,7 +46,7 @@ def pil_controller(app):
         msg.delete()
         orig_text = msg.text.split(" ", maxsplit=1)[1]
 
-        with get_image(orig_text, msg.message_id) as f:
+        with get_image(orig_text, msg.id) as f:
             client.send_photo(msg.chat.id, f)
 
         # os.remove(image_filename)

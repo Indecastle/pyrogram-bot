@@ -98,10 +98,10 @@ async def reply_handler(client: Client, msg: Message, reply_type: ReplyType):
         full_chat = await client.get_chat(msg.chat.id)
         available_reactions = full_chat.available_reactions or ['🤬']
         try:
-            await client.send_reaction(msg.chat.id, msg.message_id, available_reactions[-1])  # 🤬 👍
+            await client.send_reaction(msg.chat.id, msg.id, available_reactions[-1])  # 🤬 👍
             if reply_type == ReplyType.reactionTemp:
                 await asyncio.sleep(10)
-                await client.send_reaction(msg.chat.id, msg.message_id, '')
+                await client.send_reaction(msg.chat.id, msg.id, '')
         except Exception:
             pass
     elif reply_type == ReplyType.message:
@@ -117,7 +117,7 @@ async def mat_reply(client: Client, msg: Message):
     if msg.reply_to_message is not None and msg.reply_to_message.forward_from_chat is not None:
         disc_message = await client.get_discussion_message(msg.reply_to_message.forward_from_chat.id,
                                                            msg.reply_to_message.forward_from_message_id)
-        reply_to_message_id = disc_message.message_id
+        reply_to_message_id = disc_message.id
         return await disc_message.reply(get_random_warning(), reply_to_message_id=reply_to_message_id,
                                         disable_notification=True, parse_mode=None)
     else:

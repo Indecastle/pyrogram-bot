@@ -55,7 +55,7 @@ async def channel_comment_get_valid_last_post(app: Client, channel: int):
                     # print(get_time() + f": channel: {channels[channel]['name']}, post_id({post.message_id}) is invalid")
                     ...
                 else:
-                    channels[channel]['current_discussion_post_id'] = disc_message.message_id
+                    channels[channel]['current_discussion_post_id'] = disc_message.id
                     channels[channel]['current_post_id'] = post.message_id
                     break
 
