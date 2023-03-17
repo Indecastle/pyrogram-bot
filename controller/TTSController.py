@@ -16,7 +16,7 @@ from models.enums.tts_speaker import TtsSpeaker
 from settings_provider import set_or_update_setting_value, get_setting_value
 
 language = 'ru'
-model_id = 'ru_v3'
+model_id = 'v3_1_ru'
 sample_rate = 48000  # 48000
 speaker = 'aidar'  # aidar, baya, kseniya, xenia, random
 put_accent = True
