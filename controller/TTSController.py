@@ -68,22 +68,25 @@ def TTS_controller(app: Client):
         else:
             slep = asyncio.sleep(0)
 
-        audio = model.apply_tts(text=orig_text + "..",
-                                speaker=TTS_speaker.name,
+        with torch.no_grad():
+            audio = model.apply_tts(text=orig_text + "..",
+                                    speaker=TTS_speaker.name,
+                                    sample_rate=sample_rate,
+                                    put_accent=put_accent,
+                                    put_yo=put_yo)
+
+            duration = len(audio) // sample_rate + 1
+
+            with io.BytesIO() as buffer_:
+                setattr(buffer_, 'name', 'temp')
+                torchaudio.save(buffer_,
+                                audio.unsqueeze(0),
                                 sample_rate=sample_rate,
-                                put_accent=put_accent,
-                                put_yo=put_yo)
+                                format="ogg")
+                buffer_.seek(0)
 
-        with io.BytesIO() as buffer_:
-            setattr(buffer_, 'name', 'temp')
-            torchaudio.save(buffer_,
-                            audio.unsqueeze(0),
-                            sample_rate=sample_rate,
-                            format="wav")
-            buffer_.seek(0)
-
-            await slep
-            await client.send_voice(msg.chat.id, buffer_, reply_to_message_id=msg.reply_to_message_id)
+                await slep
+                await client.send_voice(msg.chat.id, buffer_, duration=duration, reply_to_message_id=msg.reply_to_message_id)
 
 
     @app.on_message(filters.command("", prefixes="###") & filters.me)
