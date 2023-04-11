@@ -116,7 +116,11 @@ def get_mat_stat_by_chat_id_and_date(chat_id, unix_date):
         with closing(conn.cursor()) as cur:  # auto-closes
             cur.execute("""
                 SELECT ChatId, UserId, UserName, FirstName, LastName, SUM(Count) as `Count` 
-                FROM mat_stat 
+                FROM (
+                    SELECT *
+                    FROM mat_stat
+                    ORDER BY CreatedAtDate DESC
+                )
                 WHERE ChatId = ? AND CreatedAtDate >= ? 
                 GROUP BY ChatId, UserId
                 ORDER BY Count DESC""", [chat_id, unix_date])

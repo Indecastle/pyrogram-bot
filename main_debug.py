@@ -9,10 +9,15 @@ from collections import OrderedDict
 from typing import Union
 
 import pickledb
+from dateutil.relativedelta import relativedelta
+from pyrogram.enums import ChatType
 from pyrogram.raw.functions.messages import GetAvailableReactions
 from tabulate import tabulate
 
 from pyrogram import Client, filters, utils
+
+from services.datetime_service import get_unix_date
+from settings_provider import get_mat_stat_by_chat_id_and_date
 
 max_title_string = 50
 
@@ -20,7 +25,7 @@ loop = asyncio.get_event_loop()
 
 
 def members(dialogs):
-    ar2 = list(filter(lambda x: x.chat.type == 'private', dialogs))
+    ar2 = list(filter(lambda x: x.chat.type == ChatType.PRIVATE, dialogs))
     ar3 = list(map(lambda x: OrderedDict(id=x.chat.id, first_name=x.chat.first_name, last_name=x.chat.last_name,
                                          username=x.chat.username), ar2))
     with open('dialogs/members.txt', 'w', encoding="utf-8") as f:
@@ -29,7 +34,7 @@ def members(dialogs):
 
 
 def bots(dialogs):
-    ar2 = list(filter(lambda x: x.chat.type == 'bot', dialogs))
+    ar2 = list(filter(lambda x: x.chat.type == ChatType.BOT, dialogs))
     ar3 = list(map(lambda x: OrderedDict(id=x.chat.id, first_name=x.chat.first_name, last_name=x.chat.last_name,
                                          username=x.chat.username), ar2))
     with open('dialogs/bots.txt', 'w', encoding="utf-8") as f:
@@ -38,7 +43,7 @@ def bots(dialogs):
 
 
 def groups(dialogs):
-    ar2 = list(filter(lambda x: x.chat.type == 'group', dialogs))
+    ar2 = list(filter(lambda x: x.chat.type == ChatType.GROUP, dialogs))
     ar3 = list(
         map(lambda x: OrderedDict(id=x.chat.id, title=x.chat.title[:max_title_string], username=x.chat.username), ar2))
     with open('dialogs/groups.txt', 'w', encoding="utf-8") as f:
@@ -47,7 +52,7 @@ def groups(dialogs):
 
 
 def supergroups(dialogs):
-    ar2 = list(filter(lambda x: x.chat.type == 'supergroup', dialogs))
+    ar2 = list(filter(lambda x: x.chat.type == ChatType.SUPERGROUP, dialogs))
     ar3 = list(
         map(lambda x: OrderedDict(id=x.chat.id, title=x.chat.title[:max_title_string], username=x.chat.username), ar2))
     with open('dialogs/supergroups.txt', 'w', encoding="utf-8") as f:
@@ -56,7 +61,7 @@ def supergroups(dialogs):
 
 
 def channels(dialogs):
-    ar2 = list(filter(lambda x: x.chat.type == 'channel', dialogs))
+    ar2 = list(filter(lambda x: x.chat.type == ChatType.CHANNEL, dialogs))
     ar3 = list(
         map(lambda x: OrderedDict(id=x.chat.id, title=x.chat.title[:max_title_string], username=x.chat.username), ar2))
     with open('dialogs/channels.txt', 'w', encoding="utf-8") as f:
@@ -65,7 +70,7 @@ def channels(dialogs):
 
 
 async def save_dialogs(app: Client):
-    dialogs = await app.get_dialogs()
+    dialogs = [item async for item in app.get_dialogs()]
     members(dialogs)
     bots(dialogs)
     groups(dialogs)
@@ -80,7 +85,7 @@ async def me(app):
 
 async def test1(app: Client):
     chat_id = -1001322601787
-    posts = await app.get_history(chat_id)
+    posts = await app.get_chat_history(chat_id)
     disc_mes = await app.get_discussion_message(chat_id, posts[1].message_id)
     print(disc_mes)
 
@@ -88,7 +93,7 @@ async def test1(app: Client):
 async def test2(app: Client):
     chat_id = -1001790121117
     chat = await app.get_chat(chat_id)
-    reactions = await app.send(
+    reactions = await app.invoke(
             GetAvailableReactions(
                 hash=0,
             ),
@@ -100,10 +105,15 @@ async def test2(app: Client):
 async def async_main(app):
     # await save_dialogs(app)
     # await test1(app)
-    await test2(app)
+    # await test2(app)
     # await me(app)
     # await channel_comment_test(app)
     # await mat_stat_show_all(app)
+
+    utc_time = datetime.datetime.today().date() - relativedelta(days=356 - 1)
+    unix_time = get_unix_date(utc_time)
+    mat_stats = await get_mat_stat_by_chat_id_and_date(-1001428293909, unix_time)
+
     print("end - " + str(app.is_connected))
 
 
