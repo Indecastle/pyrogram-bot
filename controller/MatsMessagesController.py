@@ -77,7 +77,7 @@ def mats_messages_controller(app: Client):
         mats_chat_messages.remove(msg.chat.id)
         await msg.delete()
 
-    @app.on_message(filters.command(["matstat", "matstat2"], prefixes="."))
+    @app.on_message(filters.command(["matstat", "matstat2"], prefixes=".") & filters.me)
     async def show_mat_stats_handler(client: Client, msg: Message):
         is_before = len(msg.command) > 1 and msg.command[1] == 'd'
         is_get_link_username = msg.command[0] == 'matstat2'
