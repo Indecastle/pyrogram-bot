@@ -37,6 +37,7 @@ patterns = [
 compiled_patterns = [re.compile(p, re.IGNORECASE | re.MULTILINE) for p in patterns]
 _re_step1 = re.compile(r"[^а-яА-ЯёЁ]+")
 _re_step2 = re.compile(r"(.)\1+")
+_re_except_symbols = re.compile(r"[🇷🇺🇺🇦]+")
 
 replace_maps = [
     (('x', 'X'), 'х'),
@@ -154,6 +155,7 @@ async def get_matstat_result(chat_id: int = None, days: int = None, is_get_link_
         except Exception as e:
             print(f"error mat_stat_show: {mat_stat.chat_id}")
     text += '...'
+    text = _re_except_symbols.sub('.', text)
     print(text)
     return text
     # print(text, end='\n\n')
