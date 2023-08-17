@@ -2,7 +2,7 @@ import asyncio
 import time
 
 from pyrogram import Client, filters
-from pyrogram.enums import ChatType
+from pyrogram.enums import ChatType, ParseMode
 from pyrogram.types import Message
 
 import common
@@ -91,9 +91,9 @@ def mats_messages_controller(app: Client):
 
         if msg.from_user and msg.from_user.is_self or msg.sender_chat and msg.sender_chat.is_creator:
             # await asyncio.sleep(7)
-            await msg.edit(text)
+            await msg.edit(text, parse_mode=ParseMode.DISABLED)
         else:
-            await app.send_message(msg.chat.id, text, disable_notification=False)
+            await app.send_message(msg.chat.id, text, disable_notification=False, parse_mode=ParseMode.DISABLED)
 
     @app.on_message(filters.command("replytype", prefixes=".") & filters.me)
     async def mat_handler(_, msg: Message):

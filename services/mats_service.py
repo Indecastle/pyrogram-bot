@@ -19,6 +19,8 @@ from settings_provider import mat_stat_increase_item, get_mat_stat_chats, get_ma
 
 is_replied_message = False
 
+bad_symbols = ['🇷🇺', '🇺🇦', '𝖘']
+
 warnings = [
     "Не выражаться!!! :)",
     "Я запрещаю вам материться!!! :)",
@@ -32,12 +34,15 @@ warnings = [
 patterns = [
     'су+(к|чк|ча+р|че+к)', 'пид[оа]+р(а+с)?([аы]|о+в)?', 'у[её]б(к|очк)?([аы]|ов|ище)?',
     'еба(ть|л)', 'еби', 'еб(ан)?(ут|еш|ёш|уч)', 'в[ыьъ]еб([аеиу])', 'д[оа]лб[оа][её]б', r'(?<!ру)(?<!влю)бля',
-    'ху(([йя]|ита)|([её]([кв]|(чек)|т))|(йн([её]й|ей)?))', r'(на)?хер', 'пизд([аà]|е|ят)', 'gghh'
+    'ху(([йя]|ита)|([её]([кв]|(чек)|т))|(йн([её]й|ей)?))', r'(на)?хер', 'пизд([аà]|е|ят)'
 ]
 compiled_patterns = [re.compile(p, re.IGNORECASE | re.MULTILINE) for p in patterns]
 _re_step1 = re.compile(r"[^а-яА-ЯёЁ]+")
 _re_step2 = re.compile(r"(.)\1+")
-_re_except_symbols = re.compile(r"[🇷🇺🇺🇦]+")
+
+
+# _re_except_symbols = re.compile(r"[🇷🇺🇺🇦]+")
+_re_except_symbols = re.compile(r"[^ \t\r\nа-яА-ЯёЁa-zA-Z0-9😀-🙏!@#$%^&*()`~;:,.'+=_№?<>{}|\"\[\]\-/\\]", re.M)
 
 replace_maps = [
     (('x', 'X'), 'х'),
@@ -155,7 +160,7 @@ async def get_matstat_result(chat_id: int = None, days: int = None, is_get_link_
         except Exception as e:
             print(f"error mat_stat_show: {mat_stat.chat_id}")
     text += '...'
-    text = _re_except_symbols.sub('.', text)
+    text = _re_except_symbols.sub('*', text)
     print(text)
     return text
     # print(text, end='\n\n')
