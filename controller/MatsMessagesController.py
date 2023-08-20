@@ -77,23 +77,27 @@ def mats_messages_controller(app: Client):
         mats_chat_messages.remove(msg.chat.id)
         await msg.delete()
 
-    @app.on_message(filters.command(["matstat", "matstat2"], prefixes=".") & filters.me)
+    @app.on_message(filters.command(["matstat", "matstat2", "matstat3"], prefixes=".") & filters.me)
     async def show_mat_stats_handler(client: Client, msg: Message):
         is_before = len(msg.command) > 1 and msg.command[1] == 'd'
         is_get_link_username = msg.command[0] == 'matstat2'
+        is_except_symbols = msg.command[0] == 'matstat3'
+
         days = 1
         if is_before:
             days = 30
             if len(msg.command) > 2 and msg.command[2]:
                 days = int(msg.command[2])
 
-        text = await get_matstat_result(msg.chat.id, days, is_get_link_username)
+        text = await get_matstat_result(msg.chat.id, days, is_get_link_username, is_except_symbols)
+
+        parse_mode = ParseMode.DISABLED if is_except_symbols else ParseMode.DEFAULT
 
         if msg.from_user and msg.from_user.is_self or msg.sender_chat and msg.sender_chat.is_creator:
             # await asyncio.sleep(7)
-            await msg.edit(text, parse_mode=ParseMode.DISABLED)
+            await msg.edit(text, parse_mode=parse_mode)
         else:
-            await app.send_message(msg.chat.id, text, disable_notification=False, parse_mode=ParseMode.DISABLED)
+            await app.send_message(msg.chat.id, text, disable_notification=False, parse_mode=parse_mode)
 
     @app.on_message(filters.command("replytype", prefixes=".") & filters.me)
     async def mat_handler(_, msg: Message):

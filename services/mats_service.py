@@ -131,7 +131,7 @@ async def mat_reply(client: Client, msg: Message):
                                          disable_notification=True, parse_mode=None)
 
 
-async def get_matstat_result(chat_id: int = None, days: int = None, is_get_link_username: bool = None):
+async def get_matstat_result(chat_id: int = None, days: int = None, is_get_link_username: bool = None, is_except_symbols: bool = None):
     utc_time = datetime.today().date() - relativedelta(days=days - 1)
     unix_time = get_unix_date(utc_time)
     mat_stats = await get_mat_stat_by_chat_id_and_date(chat_id, unix_time)
@@ -160,7 +160,8 @@ async def get_matstat_result(chat_id: int = None, days: int = None, is_get_link_
         except Exception as e:
             print(f"error mat_stat_show: {mat_stat.chat_id}")
     text += '...'
-    text = _re_except_symbols.sub('*', text)
+    if is_except_symbols:
+        text = _re_except_symbols.sub('*', text)
     print(text)
     return text
     # print(text, end='\n\n')
