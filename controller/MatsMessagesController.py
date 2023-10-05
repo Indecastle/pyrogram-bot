@@ -67,6 +67,18 @@ def mats_messages_controller(app: Client):
         await asyncio.sleep(2)
         await msg.delete()
 
+    @app.on_message(filters.command("mat_access_other", prefixes=".") & my_filters.is_favorite_chat())
+    async def mat_handler(client: Client, msg: Message):
+        try:
+            mat_schedule_on = msg.command[1] == '1'
+            await set_or_update_setting_value('is_access_for_other_mats', mat_schedule_on)
+            await msg.edit(f"is_access_for_other_mats = {mat_schedule_on}")
+        except Exception as e:
+            print("Failed to change a setting: " + str(e))
+
+        await asyncio.sleep(2)
+        await msg.delete()
+
     @app.on_message(filters.command("mat", prefixes=".") & filters.me)
     async def mat_handler(_, msg: Message):
         mats_chat_messages.add(msg.chat.id)
@@ -77,8 +89,12 @@ def mats_messages_controller(app: Client):
         mats_chat_messages.remove(msg.chat.id)
         await msg.delete()
 
-    @app.on_message(filters.command(["matstat", "matstat2", "matstat3"], prefixes=".") & filters.me)
+    @app.on_message(filters.command(["matstat", "matstat2", "matstat3"], prefixes="."))
     async def show_mat_stats_handler(client: Client, msg: Message):
+        is_access_for_other_mats = await get_setting_value_async("is_access_for_other_mats", bool)
+        if not msg.from_user.is_self and not is_access_for_other_mats:
+            return
+
         is_before = len(msg.command) > 1 and msg.command[1] == 'd'
         is_get_link_username = msg.command[0] == 'matstat2'
         is_except_symbols = msg.command[0] == 'matstat3'
