@@ -1,9 +1,10 @@
 import asyncio
 import io
 import time
-import torch
-import sounddevice as sd
-import torchaudio
+# import torch
+# import torchaudio
+# import sounddevice as sd
+
 
 from pyrogram import Client, filters
 from pyrogram.raw.functions.messages import GetAvailableReactions
@@ -21,13 +22,13 @@ sample_rate = 48000  # 48000
 speaker = 'aidar'  # aidar, baya, kseniya, xenia, random
 put_accent = True
 put_yo = True
-device = torch.device('cpu')  # cpu или gpu
-
-model, _ = torch.hub.load(repo_or_dir='snakers4/silero-models',
-                          model='silero_tts',
-                          language=language,
-                          speaker=model_id)
-model.to(device)
+# device = torch.device('cpu')  # cpu или gpu
+#
+# model, _ = torch.hub.load(repo_or_dir='snakers4/silero-models',
+#                           model='silero_tts',
+#                           language=language,
+#                           speaker=model_id)
+# model.to(device)
 
 
 TTS_speaker = TtsSpeaker(get_setting_value("TTS_speaker", int) or TtsSpeaker.aidar)
@@ -68,25 +69,25 @@ def TTS_controller(app: Client):
         else:
             slep = asyncio.sleep(0)
 
-        with torch.no_grad():
-            audio = model.apply_tts(text=orig_text + "..",
-                                    speaker=TTS_speaker.name,
-                                    sample_rate=sample_rate,
-                                    put_accent=put_accent,
-                                    put_yo=put_yo)
-
-            duration = len(audio) // sample_rate + 1
-
-            with io.BytesIO() as buffer_:
-                setattr(buffer_, 'name', 'temp')
-                torchaudio.save(buffer_,
-                                audio.unsqueeze(0),
-                                sample_rate=sample_rate,
-                                format="ogg")
-                buffer_.seek(0)
-
-                await slep
-                await client.send_voice(msg.chat.id, buffer_, duration=duration, reply_to_message_id=msg.reply_to_message_id)
+        # with torch.no_grad():
+        #     audio = model.apply_tts(text=orig_text + "..",
+        #                             speaker=TTS_speaker.name,
+        #                             sample_rate=sample_rate,
+        #                             put_accent=put_accent,
+        #                             put_yo=put_yo)
+        #
+        #     duration = len(audio) // sample_rate + 1
+        #
+        #     with io.BytesIO() as buffer_:
+        #         setattr(buffer_, 'name', 'temp')
+        #         torchaudio.save(buffer_,
+        #                         audio.unsqueeze(0),
+        #                         sample_rate=sample_rate,
+        #                         format="ogg")
+        #         buffer_.seek(0)
+        #
+        #         await slep
+        #         await client.send_voice(msg.chat.id, buffer_, duration=duration, reply_to_message_id=msg.reply_to_message_id)
 
 
     @app.on_message(filters.command("", prefixes="###") & filters.me)
