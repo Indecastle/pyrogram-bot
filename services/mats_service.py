@@ -131,7 +131,7 @@ async def mat_reply(client: Client, msg: Message):
                                          disable_notification=True, parse_mode=None)
 
 
-async def get_matstat_result(chat_id: int = None, days: int = None, is_get_link_username: bool = None, is_except_symbols: bool = None):
+async def get_matstat_result(chat_id: int = None, days: int = None, is_get_link_username: bool = None, is_except_symbols: bool = None, is_firstname_mention: bool = None):
     utc_time = datetime.today().date() - relativedelta(days=days - 1)
     unix_time = get_unix_date(utc_time)
     mat_stats = await get_mat_stat_by_chat_id_and_date(chat_id, unix_time)
@@ -151,10 +151,11 @@ async def get_matstat_result(chat_id: int = None, days: int = None, is_get_link_
     text = f'Cтатистика количества мата за {word}\n\n'
     for mat_stat in islice(mat_stats, 10 if days < 30 else 20):
         try:
+            firstName = f"[{mat_stat.firstname}](tg://user?id={mat_stat.user_id})" if is_firstname_mention else mat_stat.firstname
             if is_get_link_username:
-                text += f'{mat_stat.firstname} {(mat_stat.username and "@" + mat_stat.username) or mat_stat.lastname or ""} = {mat_stat.count}\n'
+                text += f'{firstName} {(mat_stat.username and "@" + mat_stat.username) or mat_stat.lastname or ""} = {mat_stat.count}\n'
             else:
-                text += f'{mat_stat.firstname} {mat_stat.lastname or mat_stat.username or ""} = {mat_stat.count}\n'
+                text += f'{firstName} {mat_stat.lastname or mat_stat.username or ""} = {mat_stat.count}\n'
             if days >= 30 and mat_stat.count < 10:
                 break
         except Exception as e:

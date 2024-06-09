@@ -81,8 +81,9 @@ def other_controller(app):
 
 
     @app.on_message(filters.command("lol", prefixes=".") & filters.me)
-    async def func(_, msg: Message):
+    async def func(client: Client, msg: Message):
         await msg.delete()
+        users2 = await client.get_users([msg.from_user.id])
         msgs = [(msg.message_id, msg.text) for msg in sorted(app.iter_history(msg.chat.id), key=attrgetter('date'))]
         # msgs.sort(key=itemgetter(0))
         print(msgs)

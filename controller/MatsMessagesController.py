@@ -89,15 +89,16 @@ def mats_messages_controller(app: Client):
         mats_chat_messages.remove(msg.chat.id)
         await msg.delete()
 
-    @app.on_message(filters.command(["matstat", "matstat2", "matstat3"], prefixes="."))
+    @app.on_message(filters.command(["matstat", "matstat2", "matstat3", "matstat4", "matstat24", "matstat34"], prefixes="."))
     async def show_mat_stats_handler(client: Client, msg: Message):
         is_access_for_other_mats = await get_setting_value_async("is_access_for_other_mats", bool)
         if not msg.from_user.is_self and not is_access_for_other_mats:
             return
 
         is_before = len(msg.command) > 1 and msg.command[1] == 'd'
-        is_get_link_username = msg.command[0] == 'matstat2'
-        is_except_symbols = msg.command[0] == 'matstat3'
+        is_get_link_username = msg.command[0] in ['matstat2', 'matstat24']
+        is_except_symbols = msg.command[0] in ['matstat3', 'matstat34']
+        is_firstname_mention = msg.command[0] in ['matstat4', 'matstat24', 'matstat34']
 
         days = 1
         if is_before:
@@ -105,9 +106,9 @@ def mats_messages_controller(app: Client):
             if len(msg.command) > 2 and msg.command[2]:
                 days = int(msg.command[2])
 
-        text = await get_matstat_result(msg.chat.id, days, is_get_link_username, is_except_symbols)
+        text = await get_matstat_result(msg.chat.id, days, is_get_link_username, is_except_symbols, is_firstname_mention)
 
-        parse_mode = ParseMode.DISABLED if is_except_symbols else ParseMode.DEFAULT
+        parse_mode = ParseMode.DEFAULT # ParseMode.DISABLED if is_except_symbols else ParseMode.DEFAULT
 
         if msg.from_user and msg.from_user.is_self or msg.sender_chat and msg.sender_chat.is_creator:
             # await asyncio.sleep(7)

@@ -18,6 +18,7 @@ from pyrogram import Client, filters, utils
 
 from services.datetime_service import get_unix_date
 from settings_provider import get_mat_stat_by_chat_id_and_date
+from config import api_id, api_hash
 
 max_title_string = 50
 
@@ -102,8 +103,8 @@ async def test2(app: Client):
     print(chat)
 
 
-async def async_main(app):
-    # await save_dialogs(app)
+async def async_main(app: Client):
+    await save_dialogs(app)
     # await test1(app)
     # await test2(app)
     # await me(app)
@@ -113,12 +114,14 @@ async def async_main(app):
     utc_time = datetime.datetime.today().date() - relativedelta(days=356 - 1)
     unix_time = get_unix_date(utc_time)
     mat_stats = await get_mat_stat_by_chat_id_and_date(-1001428293909, unix_time)
+    users = [item async for item in app.get_chat_members(-1001706794006)]
+
 
     print("end - " + str(app.is_connected))
 
 
 def main():
-    app: Client = Client("my_account")
+    app: Client = Client("my_account", api_id=api_id, api_hash=api_hash)
 
     with app:
         loop.run_until_complete(async_main(app))
