@@ -3,6 +3,7 @@ import random, io, os
 from operator import itemgetter, attrgetter
 import textwrap
 
+from PIL.ImageFont import FreeTypeFont
 from pyrogram import Client, filters
 from pyrogram.errors import FloodWait
 from pyrogram.types import Message
@@ -13,9 +14,9 @@ WIDTH = 40
 MARGIN = 5, 2
 
 
-def get_size(lines, font_text):
-    width = max(font_text.getsize(line)[0] for line in lines) + 2 * MARGIN[0]
-    height = sum(font_text.getsize(line)[1] for line in lines) + 2 * MARGIN[1]
+def get_size(lines: list[str], font_text: FreeTypeFont):
+    width = max(font_text.getbbox(line)[2] for line in lines) + 2 * MARGIN[0]
+    height = sum(font_text.getbbox(line)[3] for line in lines) + 2 * MARGIN[1]
     return width, height
 
 
@@ -29,7 +30,7 @@ def get_image(text, message_id):
     offset_y = 0  # margin[1]
     for line in lines:
         draw.text((MARGIN[0], offset_y), line, font=font_text, fill="black")
-        offset_y += font_text.getsize(line)[1]
+        offset_y += font_text.getbbox(line)[3]
 
     image_filename = f"temp/{message_id}.png"
     f = io.BytesIO()
